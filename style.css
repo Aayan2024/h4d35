@@ -1,4 +1,4 @@
-/* Core Styling & Reset */
+/* Core Layout Normalization */
 body, html {
     margin: 0;
     padding: 0;
@@ -7,71 +7,87 @@ body, html {
     background-color: #000000;
     font-family: 'Courier New', Courier, monospace;
     overflow: hidden;
-    color: #ffffff;
+    color: #33ff33;
 }
 
-/* Layer Management */
-.screen-layer {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transition: opacity 0.8s ease-in-out;
-}
-.hidden { display: none !important; opacity: 0; }
-.current { display: flex; opacity: 1; }
-
-/* Landing Layout */
-.skull-container {
-    text-align: center;
-    cursor: pointer;
-}
-.landing-skull {
-    max-width: 400px;
-    height: auto;
-    filter: grayscale(100%) contrast(150%);
-    transition: filter 0.3s;
-}
-.skull-container:hover .landing-skull {
-    filter: grayscale(0%) contrast(120%) drop-shadow(0 0 10px #ff003c);
-}
-.prompt-text {
-    margin-top: 20px;
-    font-size: 1.2rem;
-    letter-spacing: 2px;
-    color: #ff003c;
-    text-shadow: 2px 2px #2b0000;
-}
-
-/* Animations */
-.pulse {
-    animation: textFlicker 2s infinite alternate;
-}
-@keyframes textFlicker {
-    0% { opacity: 0.3; }
-    100% { opacity: 1; }
-}
-
-/* Monitor Environment Setup */
-.monitor-frame {
+/* Cursed Vault Background Container */
+.vault-container {
     position: relative;
     width: 100vw;
     height: 100vh;
-}
-.monitor-frame video {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+    background-image: url('https://squarespace-cdn.com'); /* Placeholder until you place your spooks image */
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-/* Retro CRT Screen Shading */
+/* Console Display Box Location */
+.console-wrapper {
+    width: 50%;
+    height: 45%;
+    background-color: rgba(0, 8, 0, 0.9);
+    border: 2px solid #114411;
+    box-shadow: inset 0 0 20px #002200, 0 0 15px #113311;
+    padding: 20px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Output Log Flow styling */
+.terminal-log {
+    flex: 1;
+    overflow-y: auto;
+    font-size: 1rem;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    text-shadow: 0 0 5px #33ff33;
+}
+
+/* Clickable Call-to-Action Link Element */
+.help-trigger {
+    color: #ff3333;
+    text-shadow: 0 0 8px #ff3333;
+    font-weight: bold;
+    text-decoration: underline;
+    cursor: pointer;
+}
+.help-trigger:hover {
+    color: #ffffff;
+    text-shadow: 0 0 10px #ffffff;
+}
+
+/* Active Console Keyboard Input Configurations */
+.input-line {
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+}
+.prompt-arrow {
+    font-size: 1.1rem;
+    margin-right: 10px;
+    text-shadow: 0 0 5px #33ff33;
+}
+#terminal-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #33ff33;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1.1rem;
+    text-shadow: 0 0 5px #33ff33;
+}
+.hidden { display: none !important; }
+
+/* Global CRT Monitor Screen Styling Overlay */
 .crt-overlay {
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
-    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-    background-size: 100% 4px, 3px 100%;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.2) 50%), linear-gradient(90deg, rgba(50, 255, 50, 0.03), rgba(0, 0, 0, 0), rgba(50, 255, 50, 0.03));
+    background-size: 100% 6px, 6px 100%;
     z-index: 999;
-    pointer-events: none; /* Allows users to click through the overlay */
+    pointer-events: none;
 }
