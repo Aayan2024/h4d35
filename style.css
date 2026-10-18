@@ -1,94 +1,77 @@
-/* Core Layout Normalization */
+/* Core Styling & Reset */
 body, html {
     margin: 0;
     padding: 0;
     width: 100%;
     height: 100%;
-    background-color: #010501; /* Deepest vintage terminal green-black */
+    background-color: #000000;
     font-family: 'Courier New', Courier, monospace;
     overflow: hidden;
-    color: #33ff33;
+    color: #ffffff;
 }
 
-/* Updated Container: Removes image dependency to guarantee it loads */
-.vault-container {
-    position: relative;
-    width: 100vw;
-    height: 100vh;
-    background-color: #020802;
+/* Layer Management */
+.screen-layer {
+    position: absolute;
+    width: 100%;
+    height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
+    transition: opacity 0.8s ease-in-out;
 }
+.hidden { display: none !important; opacity: 0; }
+.current { display: flex; opacity: 1; }
 
-/* Console Display Box Location */
-.console-wrapper {
-    width: 85%; /* Wider width to ensure it is easily visible on desktop */
-    height: 75%; /* Taller height */
-    background-color: #000c00; /* Solid terminal color */
-    border: 3px solid #115511; /* Visible retro borders */
-    box-shadow: inset 0 0 20px #002200, 0 0 30px rgba(0, 50, 0, 0.5);
-    padding: 25px;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    z-index: 10;
-}
-
-/* Output Log Flow styling */
-.terminal-log {
-    flex: 1;
-    overflow-y: auto;
-    font-size: 1.1rem; /* Slightly larger text */
-    line-height: 1.6;
-    white-space: pre-wrap;
-    text-shadow: 0 0 5px #33ff33;
-}
-
-/* Clickable Call-to-Action Link Element */
-.help-trigger {
-    color: #ff3333 !important;
-    text-shadow: 0 0 8px #ff3333;
-    font-weight: bold;
-    text-decoration: underline;
+/* Landing Layout */
+.skull-container {
+    text-align: center;
     cursor: pointer;
-    display: inline-block;
 }
-.help-trigger:hover {
-    color: #ffffff !important;
-    text-shadow: 0 0 10px #ffffff;
+.landing-skull {
+    max-width: 400px;
+    height: auto;
+    filter: grayscale(100%) contrast(150%);
+    transition: filter 0.3s;
+}
+.skull-container:hover .landing-skull {
+    filter: grayscale(0%) contrast(120%) drop-shadow(0 0 10px #ff003c);
+}
+.prompt-text {
+    margin-top: 20px;
+    font-size: 1.2rem;
+    letter-spacing: 2px;
+    color: #ff003c;
+    text-shadow: 2px 2px #2b0000;
 }
 
-/* Active Console Keyboard Input Configurations */
-.input-line {
-    display: flex;
-    align-items: center;
-    margin-top: 15px;
+/* Animations */
+.pulse {
+    animation: textFlicker 2s infinite alternate;
 }
-.prompt-arrow {
-    font-size: 1.2rem;
-    margin-right: 10px;
-    text-shadow: 0 0 5px #33ff33;
-    font-weight: bold;
+@keyframes textFlicker {
+    0% { opacity: 0.3; }
+    100% { opacity: 1; }
 }
-#terminal-input {
-    flex: 1;
-    background: transparent;
-    border: none;
-    outline: none;
-    color: #33ff33;
-    font-family: 'Courier New', Courier, monospace;
-    font-size: 1.2rem;
-    text-shadow: 0 0 5px #33ff33;
-}
-.hidden { display: none !important; }
 
-/* Global CRT Monitor Screen Styling Overlay */
+/* Monitor Environment Setup */
+.monitor-frame {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+}
+.monitor-frame video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Retro CRT Screen Shading */
 .crt-overlay {
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
-    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(50, 255, 50, 0.04), rgba(0, 0, 0, 0), rgba(50, 255, 50, 0.04));
-    background-size: 100% 6px, 6px 100%;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+    background-size: 100% 4px, 3px 100%;
     z-index: 999;
-    pointer-events: none;
+    pointer-events: none; /* Allows users to click through the overlay */
 }
