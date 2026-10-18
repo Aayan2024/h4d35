@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THE CRYPT</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- The CRT Screen Filter Overlay Layer -->
+    <div class="crt-overlay"></div>
+
+    <!-- PHASE 1: THE GATEKEEPER LANDING SCREEN -->
+    <div id="landing-screen" class="screen-layer current">
+        <div class="skull-container">
+            <!-- Replace 'skull.jpg' with your dark skull image file path -->
+            <img src="skull.jpg" alt="Cursed Gateway" class="landing-skull">
+            <div class="prompt-text pulse">CLICK ME IF YOU DARE...</div>
+        </div>
+    </div>
+
+    <!-- PHASE 2: THE TRANSITION & TRANSCRIPT CONTAINER -->
+    <div id="experience-screen" class="screen-layer hidden">
+        <div class="monitor-frame">
+            
+            <!-- Intro Video Player (Plays once, then hides) -->
+            <video id="skeleton-intro" preload="auto" muted playsinline>
+                <source src="skeleton_intro.mp4" type="video/mp4">
+            </video>
+
+            <!-- Idle Video Player (Hidden at start, loops continuously later) -->
+            <video id="skeleton-idle" loop muted playsinline class="hidden">
+                <source src="skeleton_idle.mp4" type="video/mp4">
+            </video>
+
+            <!-- The Screen Text Overlay (Fades in over the monitor later) -->
+            <div id="terminal-viewport" class="terminal-box">
+                <!-- Terminal console text will project here in Phase 2 -->
+            </div>
+
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
