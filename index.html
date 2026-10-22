@@ -4,44 +4,404 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>THE CRYPT</title>
+
+    <!-- Google Fonts: Special Elite for that typewriter/old-print feel, VT323 for terminal -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=VT323&display=swap" rel="stylesheet">
+
+    <!-- GSAP for timeline animation (walk cycle, zoom, transitions) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- The CRT Screen Filter Overlay Layer -->
+    <!-- ============================================================ -->
+    <!-- GLOBAL OVERLAYS (always on top, pointer-events: none)        -->
+    <!-- ============================================================ -->
+
+    <!-- CRT scanline + chromatic aberration overlay -->
     <div class="crt-overlay"></div>
 
-    <!-- PHASE 1: THE GATEKEEPER LANDING SCREEN -->
+    <!-- Film grain canvas - drawn by JS -->
+    <canvas id="grain-canvas"></canvas>
+
+    <!-- Film scratch lines -->
+    <div class="film-scratches">
+        <div class="scratch s1"></div>
+        <div class="scratch s2"></div>
+        <div class="scratch s3"></div>
+    </div>
+
+    <!-- Vignette -->
+    <div class="vignette"></div>
+
+    <!-- Projector flicker overlay -->
+    <div class="flicker-overlay"></div>
+
+
+    <!-- ============================================================ -->
+    <!-- PHASE 1: SKULL LANDING (your existing screen)               -->
+    <!-- ============================================================ -->
     <div id="landing-screen" class="screen-layer current">
-        <div class="skull-container">
-            <!-- Replace 'skull.jpg' with your dark skull image file path -->
+        <div class="skull-container" id="skull-trigger">
             <img src="skull.jpg" alt="Cursed Gateway" class="landing-skull">
             <div class="prompt-text pulse">CLICK ME IF YOU DARE...</div>
         </div>
     </div>
 
-    <!-- PHASE 2: THE TRANSITION & TRANSCRIPT CONTAINER -->
-    <div id="experience-screen" class="screen-layer hidden">
-        <div class="monitor-frame">
-            
-            <!-- Intro Video Player (Plays once, then hides) -->
-            <video id="skeleton-intro" preload="auto" muted playsinline>
-                <source src="skeleton_intro.mp4" type="video/mp4">
-            </video>
 
-            <!-- Idle Video Player (Hidden at start, loops continuously later) -->
-            <video id="skeleton-idle" loop muted playsinline class="hidden">
-                <source src="skeleton_idle.mp4" type="video/mp4">
-            </video>
+    <!-- ============================================================ -->
+    <!-- PHASE 2: SKELETON SCENE                                      -->
+    <!-- The skeleton walks in, sits at desk, then we zoom to screen  -->
+    <!-- ============================================================ -->
+    <div id="skeleton-screen" class="screen-layer hidden">
 
-            <!-- The Screen Text Overlay (Fades in over the monitor later) -->
-            <div id="terminal-viewport" class="terminal-box">
-                <!-- Terminal console text will project here in Phase 2 -->
+        <!-- Background: moody grey wall + floor, like Skeleton Dance -->
+        <div class="scene-bg">
+            <!-- floor line -->
+            <div class="scene-floor"></div>
+            <!-- wall texture bricks suggested by shadow bands -->
+            <div class="scene-wall-shadow"></div>
+        </div>
+
+        <!-- The desk/computer setup skeleton walks toward -->
+        <div id="scene-desk">
+            <!-- Old CRT monitor on desk -->
+            <div class="desk-monitor">
+                <div class="monitor-bezel">
+                    <div class="monitor-screen-inner">
+                        <!-- This is what skeleton is "looking at" - small green cursor blink -->
+                        <span class="tiny-cursor">_</span>
+                    </div>
+                </div>
+                <div class="monitor-stand"></div>
+            </div>
+            <!-- Desk surface -->
+            <div class="desk-surface">
+                <div class="desk-keyboard">
+                    <!-- keyboard keys suggested by rows -->
+                    <div class="key-row"></div>
+                    <div class="key-row"></div>
+                    <div class="key-row"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ---- SKELETON PUPPET (SVG inline) ---- -->
+        <div id="skeleton-puppet-wrap">
+
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 400" id="skeleton-puppet" width="180" height="360">
+              <defs>
+                <filter id="grain-sk" x="-10%" y="-10%" width="120%" height="120%">
+                  <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="4" stitchTiles="stitch" result="noise"/>
+                  <feColorMatrix type="saturate" values="0" in="noise" result="gn"/>
+                  <feBlend in="SourceGraphic" in2="gn" mode="multiply" result="bl"/>
+                  <feComponentTransfer in="bl">
+                    <feFuncR type="linear" slope="0.88"/>
+                    <feFuncG type="linear" slope="0.88"/>
+                    <feFuncB type="linear" slope="0.88"/>
+                  </feComponentTransfer>
+                </filter>
+                <filter id="bone-glow-sk">
+                  <feGaussianBlur stdDeviation="1.0" result="blur"/>
+                  <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                </filter>
+              </defs>
+
+              <g id="skel-root" filter="url(#grain-sk)">
+
+                <!-- LEFT LEG -->
+                <g id="leg-left">
+                  <ellipse cx="88" cy="295" rx="10" ry="28" fill="#b8b8b8" stroke="#111" stroke-width="2" rx="10"/>
+                  <circle cx="88" cy="322" r="9" fill="#c8c8c8" stroke="#111" stroke-width="2"/>
+                  <ellipse cx="88" cy="348" rx="8" ry="24" fill="#b8b8b8" stroke="#111" stroke-width="2"/>
+                  <ellipse cx="80" cy="370" rx="16" ry="8" fill="#c0c0c0" stroke="#111" stroke-width="2" rx="8"/>
+                </g>
+
+                <!-- RIGHT LEG -->
+                <g id="leg-right">
+                  <ellipse cx="112" cy="295" rx="10" ry="28" fill="#d0d0d0" stroke="#111" stroke-width="2"/>
+                  <circle cx="112" cy="322" r="9" fill="#dcdcdc" stroke="#111" stroke-width="2"/>
+                  <ellipse cx="112" cy="348" rx="8" ry="24" fill="#d0d0d0" stroke="#111" stroke-width="2"/>
+                  <ellipse cx="120" cy="370" rx="16" ry="8" fill="#dcdcdc" stroke="#111" stroke-width="2"/>
+                </g>
+
+                <!-- PELVIS -->
+                <ellipse id="pelvis" cx="100" cy="272" rx="24" ry="14" fill="#c8c8c8" stroke="#111" stroke-width="2"/>
+
+                <!-- SPINE vertebrae -->
+                <ellipse cx="100" cy="254" rx="7" ry="6" fill="#b8b8b8" stroke="#111" stroke-width="1"/>
+                <ellipse cx="100" cy="242" rx="7" ry="6" fill="#b8b8b8" stroke="#111" stroke-width="1"/>
+                <ellipse cx="100" cy="230" rx="7" ry="6" fill="#b8b8b8" stroke="#111" stroke-width="1"/>
+
+                <!-- RIBCAGE -->
+                <g id="ribcage">
+                  <ellipse cx="100" cy="212" rx="9" ry="24" fill="#aaaaaa" stroke="#111" stroke-width="1.5"/>
+                  <!-- left ribs -->
+                  <path d="M91 200 Q68 197 66 209 Q68 221 91 218" fill="none" stroke="#b8b8b8" stroke-width="6" stroke-linecap="round"/>
+                  <path d="M91 208 Q64 205 62 217 Q64 228 91 225" fill="none" stroke="#b8b8b8" stroke-width="5" stroke-linecap="round"/>
+                  <path d="M91 216 Q66 216 64 225 Q66 233 91 231" fill="none" stroke="#b0b0b0" stroke-width="4.5" stroke-linecap="round"/>
+                  <path d="M91 223 Q70 224 69 231 Q71 237 91 235" fill="none" stroke="#a8a8a8" stroke-width="4" stroke-linecap="round"/>
+                  <!-- right ribs -->
+                  <path d="M109 200 Q132 197 134 209 Q132 221 109 218" fill="none" stroke="#c0c0c0" stroke-width="6" stroke-linecap="round"/>
+                  <path d="M109 208 Q136 205 138 217 Q136 228 109 225" fill="none" stroke="#c0c0c0" stroke-width="5" stroke-linecap="round"/>
+                  <path d="M109 216 Q134 216 136 225 Q134 233 109 231" fill="none" stroke="#b8b8b8" stroke-width="4.5" stroke-linecap="round"/>
+                  <path d="M109 223 Q130 224 131 231 Q129 237 109 235" fill="none" stroke="#b0b0b0" stroke-width="4" stroke-linecap="round"/>
+                </g>
+
+                <!-- LEFT ARM -->
+                <g id="arm-left">
+                  <circle cx="76" cy="194" r="10" fill="#b8b8b8" stroke="#111" stroke-width="2"/>
+                  <g id="la-upper-group" style="transform-origin: 76px 194px;">
+                    <ellipse cx="62" cy="212" rx="8" ry="22" fill="#b8b8b8" stroke="#111" stroke-width="2" transform="rotate(-20 62 212)" filter="url(#bone-glow-sk)"/>
+                    <circle cx="54" cy="230" r="8" fill="#c0c0c0" stroke="#111" stroke-width="2"/>
+                    <g id="la-fore-group" style="transform-origin: 54px 230px;">
+                      <ellipse cx="46" cy="248" rx="7" ry="20" fill="#b8b8b8" stroke="#111" stroke-width="2" transform="rotate(-15 46 248)" filter="url(#bone-glow-sk)"/>
+                      <!-- hand -->
+                      <ellipse cx="40" cy="264" rx="12" ry="8" fill="#c0c0c0" stroke="#111" stroke-width="2" transform="rotate(-25 40 264)"/>
+                      <ellipse cx="32" cy="258" rx="6" ry="5" fill="#c0c0c0" stroke="#111" stroke-width="1.5"/>
+                      <ellipse cx="42" cy="270" rx="6" ry="5" fill="#c0c0c0" stroke="#111" stroke-width="1.5"/>
+                    </g>
+                  </g>
+                </g>
+
+                <!-- RIGHT ARM -->
+                <g id="arm-right">
+                  <circle cx="124" cy="194" r="10" fill="#d0d0d0" stroke="#111" stroke-width="2"/>
+                  <g id="ra-upper-group" style="transform-origin: 124px 194px;">
+                    <ellipse cx="138" cy="212" rx="8" ry="22" fill="#d0d0d0" stroke="#111" stroke-width="2" transform="rotate(20 138 212)" filter="url(#bone-glow-sk)"/>
+                    <circle cx="146" cy="230" r="8" fill="#dcdcdc" stroke="#111" stroke-width="2"/>
+                    <g id="ra-fore-group" style="transform-origin: 146px 230px;">
+                      <ellipse cx="154" cy="248" rx="7" ry="20" fill="#d0d0d0" stroke="#111" stroke-width="2" transform="rotate(15 154 248)" filter="url(#bone-glow-sk)"/>
+                      <ellipse cx="160" cy="264" rx="12" ry="8" fill="#dcdcdc" stroke="#111" stroke-width="2" transform="rotate(25 160 264)"/>
+                      <ellipse cx="168" cy="258" rx="6" ry="5" fill="#dcdcdc" stroke="#111" stroke-width="1.5"/>
+                      <ellipse cx="158" cy="270" rx="6" ry="5" fill="#dcdcdc" stroke="#111" stroke-width="1.5"/>
+                    </g>
+                  </g>
+                </g>
+
+                <!-- NECK -->
+                <ellipse cx="100" cy="180" rx="8" ry="12" fill="#b8b8b8" stroke="#111" stroke-width="2"/>
+
+                <!-- SKULL -->
+                <g id="skull-head">
+                  <!-- cranium -->
+                  <ellipse cx="100" cy="148" rx="34" ry="36" fill="#e4e4e4" stroke="#111" stroke-width="2.5" filter="url(#bone-glow-sk)"/>
+                  <!-- cheekbones -->
+                  <ellipse cx="73" cy="160" rx="12" ry="9" fill="#d8d8d8" stroke="#111" stroke-width="1.5"/>
+                  <ellipse cx="127" cy="160" rx="12" ry="9" fill="#d8d8d8" stroke="#111" stroke-width="1.5"/>
+                  <!-- jaw -->
+                  <path d="M73 163 Q100 182 127 163 Q120 175 100 177 Q80 175 73 163Z" fill="#d0d0d0" stroke="#111" stroke-width="2"/>
+                  <!-- teeth -->
+                  <rect x="84" y="168" width="7" height="8" rx="2" fill="#f0f0f0" stroke="#111" stroke-width="1"/>
+                  <rect x="93" y="169" width="7" height="8" rx="2" fill="#f0f0f0" stroke="#111" stroke-width="1"/>
+                  <rect x="102" y="168" width="7" height="8" rx="2" fill="#f0f0f0" stroke="#111" stroke-width="1"/>
+                  <rect x="111" y="169" width="6" height="7" rx="2" fill="#f0f0f0" stroke="#111" stroke-width="1"/>
+                  <!-- LEFT EYE SOCKET -->
+                  <ellipse cx="85" cy="148" rx="14" ry="14" fill="#0a0a0a" stroke="#111" stroke-width="1.5"/>
+                  <ellipse cx="82" cy="144" rx="4" ry="4" fill="#ffffff" opacity="0.12"/>
+                  <!-- RIGHT EYE SOCKET -->
+                  <ellipse cx="115" cy="148" rx="14" ry="14" fill="#0a0a0a" stroke="#111" stroke-width="1.5"/>
+                  <ellipse cx="112" cy="144" rx="4" ry="4" fill="#ffffff" opacity="0.12"/>
+                  <!-- nose -->
+                  <path d="M96 160 Q100 166 104 160 Q102 168 100 168 Q98 168 96 160Z" fill="#1a1a1a"/>
+                  <!-- brow ridges -->
+                  <path d="M71 134 Q85 127 99 132" fill="none" stroke="#aaaaaa" stroke-width="3.5" stroke-linecap="round"/>
+                  <path d="M101 132 Q115 127 129 134" fill="none" stroke="#aaaaaa" stroke-width="3.5" stroke-linecap="round"/>
+                </g>
+
+              </g>
+            </svg>
+
+        </div><!-- end skeleton-puppet-wrap -->
+
+    </div><!-- end skeleton-screen -->
+
+
+    <!-- ============================================================ -->
+    <!-- PHASE 3: TERMINAL / CMD INTERFACE                            -->
+    <!-- Zooms in from the monitor on the desk                        -->
+    <!-- ============================================================ -->
+    <div id="terminal-screen" class="screen-layer hidden">
+
+        <!-- Terminal bezel - the outer monitor frame -->
+        <div id="terminal-bezel">
+            <div id="terminal-header">
+                <span class="terminal-title">C:\CRYPT&gt; _</span>
+                <span class="terminal-blink-dot"></span>
             </div>
 
+            <!-- Main terminal viewport -->
+            <div id="terminal-viewport">
+                <div id="terminal-output"></div>
+                <div id="terminal-input-line">
+                    <span class="prompt-symbol">&gt;&gt;</span>
+                    <span id="terminal-typed"></span>
+                    <span class="cursor-block">█</span>
+                </div>
+            </div>
         </div>
-    </div>
 
+        <!-- SECTION OVERLAYS - slide in when a command is entered -->
+
+        <!-- DIAGNOSTICS.LOG -->
+        <div id="section-diagnostics" class="section-overlay hidden">
+            <div class="section-inner">
+                <div class="section-header">
+                    <span class="sec-tag">[DIAGNOSTICS.LOG]</span>
+                    <button class="close-section" data-target="section-diagnostics">× CLOSE</button>
+                </div>
+                <div class="section-body">
+                    <pre class="log-text">
+SYSTEM SCAN INITIATED... <span class="blink-text">██████████</span> 100%
+ENTITY IDENTIFIED: <span class="redacted" title="REVEAL">████████████</span>
+STATUS: UNDEAD / OPERATIONAL
+LAST KNOWN LOCATION: <span class="redacted" title="REVEAL">████████████████</span>
+
+MEMORY FRAGMENTS RECOVERED:
+-----------------------------
+&gt; Born somewhere between midnight and 3am.
+&gt; Studied the dark arts of <span class="redacted" title="REVEAL">Computer Science</span>.
+&gt; Current occupation: <span class="redacted" title="REVEAL">Software Engineer</span>.
+&gt; Interests: [CORRUPTED] ...retro horror... [CORRUPTED] ...code... [CORRUPTED]
+&gt; Known associates: <span class="redacted" title="REVEAL">████ and ████</span>
+
+WARNING: Some records have been sealed.
+Highlight redacted text to reveal.
+
+DIAGNOSTICS COMPLETE. NO ANOMALIES FOUND.
+... just the usual haunting.
+                    </pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- EXPERIMENT_ARCHIVE_199X -->
+        <div id="section-archive" class="section-overlay hidden">
+            <div class="section-inner">
+                <div class="section-header">
+                    <span class="sec-tag">[EXPERIMENT_ARCHIVE_199X]</span>
+                    <button class="close-section" data-target="section-archive">× CLOSE</button>
+                </div>
+                <div class="section-body">
+                    <p class="archive-intro">INSERT FLOPPY DISK TO ACCESS EXPERIMENT</p>
+                    <div class="floppy-grid">
+                        <div class="floppy-disk" data-project="project1">
+                            <div class="floppy-body">
+                                <div class="floppy-label">PROJECT_01<br><small>DDOS_MAP.EXE</small></div>
+                                <div class="floppy-shutter"></div>
+                            </div>
+                            <div class="floppy-caption">DDoS Attack Map</div>
+                        </div>
+                        <div class="floppy-disk" data-project="project2">
+                            <div class="floppy-body">
+                                <div class="floppy-label">PROJECT_02<br><small>UNKNOWN.EXE</small></div>
+                                <div class="floppy-shutter"></div>
+                            </div>
+                            <div class="floppy-caption">Add Your Project</div>
+                        </div>
+                        <div class="floppy-disk locked" data-project="project3">
+                            <div class="floppy-body">
+                                <div class="floppy-label">PROJECT_??<br><small>[CORRUPTED]</small></div>
+                                <div class="floppy-shutter"></div>
+                            </div>
+                            <div class="floppy-caption">LOCKED</div>
+                        </div>
+                    </div>
+                    <!-- Floppy viewer popup -->
+                    <div id="floppy-viewer" class="hidden">
+                        <div class="floppy-viewer-header">
+                            <span id="floppy-viewer-title">LOADING...</span>
+                            <button id="floppy-eject">⏏ EJECT</button>
+                        </div>
+                        <div id="floppy-viewer-content"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TRANSMISSIONS.TXT -->
+        <div id="section-transmissions" class="section-overlay hidden">
+            <div class="section-inner">
+                <div class="section-header">
+                    <span class="sec-tag">[TRANSMISSIONS.TXT]</span>
+                    <button class="close-section" data-target="section-transmissions">× CLOSE</button>
+                </div>
+                <div class="section-body">
+                    <div class="transmission-entry">
+                        <div class="trans-meta">SIGNAL_001 // DATE: [UNKNOWN] // FREQ: 87.6 MHz</div>
+                        <div class="trans-body">
+                            ...static... found this terminal in the basement...
+                            seems to still be connected to something. or someone.
+                            the screen flickers when I type certain words...
+                            ...static...
+                        </div>
+                    </div>
+                    <div class="transmission-entry">
+                        <div class="trans-meta">SIGNAL_002 // DATE: [REDACTED] // FREQ: 87.6 MHz</div>
+                        <div class="trans-body">
+                            Add your blog posts or thoughts here.
+                            Each one is a transmission from the void.
+                            ...static...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SÉANCE.EXE -->
+        <div id="section-seance" class="section-overlay hidden">
+            <div class="section-inner">
+                <div class="section-header">
+                    <span class="sec-tag">[SÉANCE.EXE]</span>
+                    <button class="close-section" data-target="section-seance">× CLOSE</button>
+                </div>
+                <div class="section-body">
+                    <div class="seance-board">
+                        <p class="seance-intro">ESTABLISH A CONNECTION WITH THE ENTITY</p>
+                        <div class="seance-form">
+                            <div class="form-field">
+                                <label>IDENTIFY YOURSELF &gt;&gt;</label>
+                                <input type="text" id="seance-name" placeholder="your name..." autocomplete="off" spellcheck="false"/>
+                            </div>
+                            <div class="form-field">
+                                <label>YOUR FREQUENCY &gt;&gt;</label>
+                                <input type="email" id="seance-email" placeholder="your@email.com" autocomplete="off" spellcheck="false"/>
+                            </div>
+                            <div class="form-field">
+                                <label>TRANSMIT MESSAGE &gt;&gt;</label>
+                                <textarea id="seance-msg" rows="4" placeholder="speak into the void..."></textarea>
+                            </div>
+                            <button id="seance-send">▶ INITIATE SÉANCE</button>
+                            <div id="seance-response" class="hidden">
+                                <span class="blink-text">CONNECTION ESTABLISHED... THE ENTITY HAS BEEN NOTIFIED.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div><!-- end terminal-screen -->
+
+
+    <!-- ============================================================ -->
+    <!-- AUDIO: ambient hum + click sounds                            -->
+    <!-- ============================================================ -->
+    <audio id="audio-click" preload="auto">
+        <!-- mechanical click on nav interaction -->
+        <source src="sounds/click.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="audio-ambient" loop preload="auto">
+        <!-- low vinyl crackle hum - ambient background -->
+        <source src="sounds/ambient.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="audio-type" preload="auto">
+        <source src="sounds/typekey.mp3" type="audio/mpeg">
+    </audio>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="app.js"></script>
 </body>
 </html>
