@@ -938,3 +938,467 @@ html, body {
     background: rgba(180,20,20,0.35);
     color: var(--film-white);
 }
+
+/* ============================================================
+   CREATION CHAMBER — INK MACHINE
+   ============================================================ */
+
+.creation-overlay {
+    background: #1a1005;
+}
+
+/* The full-room container */
+#ink-room {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Background image — your Bendy screenshot */
+#ink-bg {
+    position: absolute;
+    inset: 0;
+    background: url('ink_machine.jpg') center center / cover no-repeat;
+    filter: contrast(110%) brightness(0.82);
+    z-index: 0;
+}
+
+/* Sepia amber overlay */
+#ink-sepia {
+    position: absolute;
+    inset: 0;
+    background: rgba(60, 35, 5, 0.38);
+    mix-blend-mode: multiply;
+    z-index: 1;
+    pointer-events: none;
+    transition: opacity 0.8s;
+}
+
+/* Ink puddle ripple */
+#ink-puddle {
+    position: absolute;
+    bottom: 28%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+    pointer-events: none;
+}
+
+.puddle-ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 2px solid rgba(10,5,0,0.5);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    animation: puddle-ripple 3s ease-out infinite;
+}
+
+.puddle-ring.r1 { width: 60px;  height: 20px; animation-delay: 0s; }
+.puddle-ring.r2 { width: 100px; height: 34px; animation-delay: 1s; }
+.puddle-ring.r3 { width: 140px; height: 46px; animation-delay: 2s; }
+
+@keyframes puddle-ripple {
+    0%   { transform: translate(-50%,-50%) scale(0);   opacity: 0.7; }
+    100% { transform: translate(-50%,-50%) scale(1.4); opacity: 0; }
+}
+
+/* The machine door hotspot */
+#ink-door {
+    position: absolute;
+    top: 12%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 22%;
+    height: 62%;
+    z-index: 10;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+#ink-door-panel {
+    position: absolute;
+    inset: 0;
+    background: rgba(20,12,4,0.55);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    padding: 12px 8px;
+    border: 2px solid rgba(180,140,60,0.2);
+    border-radius: 4px;
+    transition: none;
+}
+
+.door-bar {
+    width: 80%;
+    height: 6px;
+    background: rgba(80,55,20,0.7);
+    border-radius: 3px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.8);
+}
+
+/* Hover prompt text */
+#ink-door-prompt {
+    position: absolute;
+    bottom: -36px;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    font-family: var(--font-terminal);
+    font-size: clamp(0.7rem, 1.4vw, 1rem);
+    color: #ffcc44;
+    text-shadow: 0 0 10px #ffaa00, 0 0 20px #ff6600;
+    letter-spacing: 3px;
+    opacity: 0;
+    transition: opacity 0.3s, bottom 0.3s;
+    pointer-events: none;
+    z-index: 20;
+}
+
+#ink-door-prompt.visible {
+    opacity: 1;
+    bottom: -28px;
+}
+
+/* Gauge */
+#gauge-wrap {
+    position: absolute;
+    right: -60px;
+    top: 30%;
+    width: 48px;
+    height: 48px;
+    pointer-events: none;
+}
+
+#gauge-needle {
+    position: absolute;
+    bottom: 2px;
+    left: 50%;
+    width: 3px;
+    height: 20px;
+    background: var(--red-accent);
+    transform-origin: bottom center;
+    transform: translateX(-50%) rotate(20deg);
+    border-radius: 2px;
+    box-shadow: 0 0 4px var(--red-accent);
+}
+
+/* Ink splatter flash */
+.ink-splatter-flash {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 200px; height: 200px;
+    margin: -100px 0 0 -100px;
+    background: radial-gradient(circle, rgba(5,3,0,0.9) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 50;
+}
+
+/* Warning text */
+#ink-warning {
+    position: absolute;
+    bottom: 6%;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    font-family: var(--font-terminal);
+    font-size: clamp(0.7rem, 1.5vw, 1rem);
+    color: rgba(200,160,60,0.7);
+    letter-spacing: 3px;
+    z-index: 15;
+    pointer-events: none;
+}
+
+.ink-sub {
+    display: block;
+    font-size: 0.75em;
+    color: rgba(150,100,30,0.5);
+    margin-top: 4px;
+    letter-spacing: 5px;
+}
+
+/* Content revealed after door opens */
+#ink-content {
+    position: absolute;
+    inset: 0;
+    z-index: 20;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    pointer-events: none; /* children re-enable */
+}
+
+/* Mode buttons */
+#ink-mode-buttons {
+    display: flex;
+    gap: 28px;
+    pointer-events: all;
+}
+
+.ink-mode-btn {
+    font-family: var(--font-terminal);
+    font-size: clamp(0.85rem, 1.8vw, 1.1rem);
+    background: rgba(10,6,2,0.88);
+    border: 1px solid rgba(180,130,40,0.5);
+    color: #c8a040;
+    padding: 14px 28px;
+    cursor: pointer;
+    letter-spacing: 2px;
+    line-height: 1.6;
+    text-align: center;
+    transition: all 0.25s;
+    box-shadow: 0 0 12px rgba(180,100,0,0.15);
+}
+
+.ink-mode-btn small {
+    display: block;
+    font-size: 0.7em;
+    color: #806030;
+    margin-top: 4px;
+    letter-spacing: 4px;
+}
+
+.ink-mode-btn:hover {
+    background: rgba(30,18,4,0.95);
+    border-color: #c8a040;
+    color: #ffcc66;
+    box-shadow: 0 0 20px rgba(220,150,0,0.3);
+}
+
+/* Gallery wrapper */
+.ink-gallery {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: all;
+    padding: 60px 40px 40px;
+}
+
+/* ---- CEL CAROUSEL ---- */
+#cel-carousel {
+    overflow: hidden;
+    gap: 0;
+    flex-direction: column;
+}
+
+.cel-track {
+    display: flex;
+    gap: 32px;
+    will-change: transform;
+    flex-shrink: 0;
+}
+
+.cel-item {
+    flex-shrink: 0;
+    width: clamp(240px, 28vw, 360px);
+}
+
+.cel-frame {
+    background: #f0e8d0;
+    border: 3px solid #c8a84a;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow:
+        0 0 0 8px rgba(10,6,2,0.6),
+        0 8px 32px rgba(0,0,0,0.8);
+    filter: sepia(30%) contrast(105%);
+}
+
+.cel-peg-holes {
+    display: flex;
+    justify-content: space-evenly;
+    padding: 6px 20px;
+    background: #e0d4b0;
+    border-bottom: 1px solid #c8b070;
+}
+
+.cel-peg-holes span {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #1a1005;
+    border: 1px solid #8a7040;
+}
+
+.cel-image-area {
+    width: 100%;
+    aspect-ratio: 4/3;
+    background: #d8cc98;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.cel-image-area img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: sepia(20%) contrast(110%);
+}
+
+.cel-placeholder {
+    font-family: var(--font-terminal);
+    font-size: 0.85rem;
+    color: #8a7040;
+    letter-spacing: 2px;
+}
+
+.cel-notes {
+    padding: 8px 12px;
+    font-family: var(--font-print);
+    font-size: 0.75rem;
+    color: #6a5030;
+    background: #e8dca8;
+    border-top: 1px solid #c0a060;
+    font-style: italic;
+}
+
+/* Carousel arrows */
+.cel-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: var(--font-terminal);
+    font-size: 1.4rem;
+    background: rgba(10,6,2,0.85);
+    border: 1px solid rgba(180,130,40,0.4);
+    color: #c8a040;
+    padding: 10px 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    z-index: 10;
+}
+
+#cel-prev { left: 12px; }
+#cel-next { right: 12px; }
+
+.cel-arrow:hover {
+    color: #ffcc66;
+    border-color: #c8a040;
+    box-shadow: 0 0 12px rgba(200,160,0,0.3);
+}
+
+/* ---- PROJECTOR ---- */
+#projector-view {
+    flex-direction: column;
+    background: rgba(5,3,0,0.5);
+}
+
+/* Projector beam from top */
+#proj-beam {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 80px solid transparent;
+    border-right: 80px solid transparent;
+    border-top: 60vh solid rgba(255,220,100,0.04);
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* The screen on the back wall */
+#proj-screen {
+    position: relative;
+    width: min(700px, 80vw);
+    min-height: 280px;
+    background: rgba(240,225,180,0.08);
+    border: 2px solid rgba(180,140,60,0.25);
+    border-radius: 4px;
+    padding: 32px 40px 64px;
+    box-shadow:
+        0 0 60px rgba(255,200,80,0.06),
+        inset 0 0 30px rgba(0,0,0,0.4);
+    z-index: 2;
+}
+
+.proj-title {
+    font-family: var(--font-terminal);
+    font-size: clamp(0.75rem, 1.5vw, 0.95rem);
+    color: rgba(200,160,60,0.7);
+    letter-spacing: 3px;
+    margin-bottom: 20px;
+    border-bottom: 1px solid rgba(180,130,40,0.2);
+    padding-bottom: 10px;
+}
+
+.proj-body {
+    font-family: var(--font-print);
+    font-size: clamp(1rem, 2vw, 1.2rem);
+    color: rgba(230,210,160,0.85);
+    line-height: 2;
+    white-space: pre-wrap;
+}
+
+/* Iron lever arrows */
+.proj-lever {
+    position: absolute;
+    bottom: 16px;
+    font-family: var(--font-terminal);
+    font-size: 0.9rem;
+    background: transparent;
+    border: 1px solid rgba(140,100,30,0.4);
+    color: rgba(160,120,40,0.7);
+    padding: 6px 16px;
+    cursor: pointer;
+    letter-spacing: 3px;
+    transition: all 0.2s;
+}
+
+#proj-prev { left: 20px; }
+#proj-next { right: 20px; }
+
+.proj-lever:hover {
+    color: #c8a040;
+    border-color: #c8a040;
+    box-shadow: 0 0 8px rgba(200,160,0,0.2);
+}
+
+/* Projector reel */
+#proj-reel {
+    position: absolute;
+    top: 16px;
+    right: 24px;
+    pointer-events: none;
+    z-index: 3;
+}
+
+.reel-circle {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 3px solid rgba(140,100,30,0.5);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.reel-spoke {
+    position: absolute;
+    width: 2px;
+    height: 18px;
+    background: rgba(140,100,30,0.5);
+    border-radius: 1px;
+    top: 50%; left: 50%;
+    transform-origin: bottom center;
+}
+
+.reel-spoke:nth-child(1) { transform: translate(-50%, -100%) rotate(0deg); }
+.reel-spoke:nth-child(2) { transform: translate(-50%, -100%) rotate(90deg); }
+.reel-spoke:nth-child(3) { transform: translate(-50%, -100%) rotate(180deg); }
+.reel-spoke:nth-child(4) { transform: translate(-50%, -100%) rotate(270deg); }
+
+
