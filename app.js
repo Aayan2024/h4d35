@@ -459,8 +459,9 @@ document.addEventListener("DOMContentLoaded", () => {
             { text: "├─────────────────────────────────────────────┤",   cls: "t-dim" },
             { text: "│  DIAGNOSTICS  — who / what is this entity   │",   cls: "" },
             { text: "│  ARCHIVE      — experiment files 199X       │",   cls: "" },
-            { text: "│  TRANSMIT     — intercepted signal logs      │",   cls: "" },
+            { text: "│  TRANSMIT     — intercepted signal logs     │",   cls: "" },
             { text: "│  SÉANCE       — establish contact           │",   cls: "" },
+            { text: "│  CREATION     — the creation chamber        │",   cls: "" },
             { text: "│  CLEAR        — clear terminal              │",   cls: "" },
             { text: "│  HELP         — show this again             │",   cls: "" },
             { text: "└─────────────────────────────────────────────┘",   cls: "t-dim" },
@@ -545,7 +546,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 inputLocked = false;
                 break;
 
-            case "SÉANCE":
+            case "CREATION":
+                await addOutputLine("UNLOCKING CREATION_CHAMBER.EXE ...", "", 0);
+                await addOutputLine("WARNING: Do not touch the ink pipes.", "t-error", 60);
+                await delay(900);
+                openSection("section-creation");
+                inputLocked = false;
+                break;
+              
             case "SEANCE":
                 await addOutputLine("INITIALISING SÉANCE.EXE ...", "", 0);
                 await delay(800);
@@ -752,7 +760,233 @@ with your actual work.
         });
     }
 
+       /* --------------------------------------------------------
+       CREATION CHAMBER — INK MACHINE
+    -------------------------------------------------------- */
+    (function initCreationChamber() {
 
+        const inkDoor      = document.getElementById("ink-door");
+        const inkDoorPanel = document.getElementById("ink-door-panel");
+        const inkPrompt    = document.getElementById("ink-door-prompt");
+        const gaugeNeedle  = document.getElementById("gauge-needle");
+        const inkContent   = document.getElementById("ink-content");
+        const inkWarning   = document.getElementById("ink-warning");
+        const inkRoom      = document.getElementById("ink-room");
+
+        if (!inkDoor) return; // section not in DOM yet, bail
+
+        let doorOpen = false;
+
+        /* --- HOVER: gauge twitches, prompt flashes --- */
+        inkDoor.addEventListener("mouseenter", () => {
+            if (doorOpen) return;
+            inkPrompt.classList.add("visible");
+            gsap.to(gaugeNeedle, {
+                rotation: 85,
+                transformOrigin: "bottom center",
+                duration: 0.3,
+                ease: "elastic.out(1, 0.3)",
+                yoyo: true,
+                repeat: 3
+            });
+        });
+
+        inkDoor.addEventListener("mouseleave", () => {
+            if (doorOpen) return;
+            inkPrompt.classList.remove("visible");
+            gsap.to(gaugeNeedle, {
+                rotation: 20,
+                transformOrigin: "bottom center",
+                duration: 0.5,
+                ease: "power2.out"
+            });
+        });
+
+        /* --- CLICK: door grinds open --- */
+        inkDoor.addEventListener("click", () => {
+            if (doorOpen) return;
+            doorOpen = true;
+            inkPrompt.classList.remove("visible");
+            playSound(audioClick);
+
+            /* Door panel slides up */
+            gsap.to(inkDoorPanel, {
+                y: "-100%",
+                duration: 1.4,
+                ease: "power3.inOut",
+                onComplete: () => {
+                    inkDoorPanel.style.display = "none";
+                }
+            });
+
+            /* Ink splatter flash */
+            const splatter = document.createElement("div");
+            splatter.className = "ink-splatter-flash";
+            inkRoom.appendChild(splatter);
+            gsap.fromTo(splatter,
+                { opacity: 0.9, scale: 0.5 },
+                { opacity: 0, scale: 3, duration: 0.8, ease: "power2.out",
+                  onComplete: () => splatter.remove() }
+            );
+
+            /* Room darkens slightly */
+            gsap.to("#ink-sepia", { opacity: 0.6, duration: 0.8 });
+
+            /* Warning fades */
+            gsap.to(inkWarning, { opacity: 0, duration: 0.5 });
+
+            /* Reveal content buttons */
+            setTimeout(() => {
+                inkContent.classList.remove("hidden");
+                gsap.fromTo(inkContent,
+                    { opacity: 0, y: 30 },
+                    { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }
+                );
+            }, 1200);
+        });
+
+
+        /* --- MODE BUTTONS --- */
+        document.getElementById("btn-sketches").addEventListener("click", () => {
+            showGallery("cel-carousel");
+            playSound(audioClick);
+        });
+
+        document.getElementById("btn-manuscripts").addEventListener("click", () => {
+            showGallery("projector-view");
+            initProjector();
+            playSound(audioClick);
+            /* Darken room more for projector */
+            gsap.to("#ink-sepia", { opacity: 0.82, duration: 1.0 });
+        });
+
+        function showGallery(id) {
+            document.querySelectorAll(".ink-gallery").forEach(g => g.classList.add("hidden"));
+            const el = document.getElementById(id);
+            if (el) {
+                el.classList.remove("hidden");
+                gsap.fromTo(el,
+                    { opacity: 0 },
+                    { opacity: 1, duration: 0.5 }
+                );
+            }
+        }
+
+
+        /* --- CEL CAROUSEL --- */
+        const celTrack  = document.getElementById("cel-track");
+        let   celIndex  = 0;
+
+        function updateCarousel() {
+            if (!celTrack) return;
+            const items = celTrack.querySelectorAll(".cel-item");
+            const itemW = items[0] ? items[0].offsetWidth + 32 : 320; // 32 = gap
+            gsap.to(celTrack, {
+                x: -(celIndex * itemW),
+                duration: 0.6,
+                ease: "power2.inOut"
+            });
+        }
+
+        document.getElementById("cel-prev").addEventListener("click", () => {
+            const items = document.querySelectorAll(".cel-item");
+            celIndex = Math.max(0, celIndex - 1);
+            updateCarousel();
+            playSound(audioClick);
+        });
+
+        document.getElementById("cel-next").addEventListener("click", () => {
+            const items = document.querySelectorAll(".cel-item");
+            celIndex = Math.min(items.length - 1, celIndex + 1);
+            updateCarousel();
+            playSound(audioClick);
+        });
+
+
+        /* --- PROJECTOR / MANUSCRIPTS --- */
+
+        /* Add your writing here — title + body */
+        const manuscripts = [
+            {
+                title:  "MANUSCRIPT_001 // [UNTITLED]",
+                body:   "Add your poem, story, or writing here.\nThis is the first entry.\n\nThe machine produced it.\nOr maybe you did.\nIt's hard to tell anymore."
+            },
+            {
+                title:  "MANUSCRIPT_002 // [REDACTED]",
+                body:   "A second piece of writing goes here.\nReplace this placeholder with your own words.\n\n...static... signal lost... ...static..."
+            }
+        ];
+
+        let projIndex = 0;
+        let projTyping = false;
+
+        function initProjector() {
+            /* Reel spin animation */
+            gsap.to(".reel-circle", {
+                rotation: 360,
+                transformOrigin: "center center",
+                duration: 3,
+                repeat: -1,
+                ease: "none"
+            });
+            renderManuscript(0);
+        }
+
+        function renderManuscript(idx) {
+            if (projTyping) return;
+            const projContent = document.getElementById("proj-content");
+            if (!projContent) return;
+
+            const ms = manuscripts[idx];
+            if (!ms) return;
+
+            projTyping = true;
+            projContent.innerHTML = "";
+
+            /* Title */
+            const titleEl = document.createElement("div");
+            titleEl.className = "proj-title";
+            titleEl.textContent = ms.title;
+            projContent.appendChild(titleEl);
+
+            /* Typewriter body */
+            const bodyEl = document.createElement("div");
+            bodyEl.className = "proj-body";
+            projContent.appendChild(bodyEl);
+
+            let i = 0;
+            const txt = ms.body;
+            function typeChar() {
+                if (i < txt.length) {
+                    bodyEl.textContent += txt[i] === "\n" ? "\n" : txt[i];
+                    i++;
+                    setTimeout(typeChar, 28);
+                } else {
+                    projTyping = false;
+                }
+            }
+            /* Brief flash between slides */
+            gsap.fromTo("#proj-screen",
+                { opacity: 0.1 },
+                { opacity: 1, duration: 0.4, onComplete: typeChar }
+            );
+        }
+
+        document.getElementById("proj-prev").addEventListener("click", () => {
+            if (projTyping) return;
+            projIndex = Math.max(0, projIndex - 1);
+            renderManuscript(projIndex);
+            playSound(audioClick);
+        });
+
+        document.getElementById("proj-next").addEventListener("click", () => {
+            if (projTyping) return;
+            projIndex = Math.min(manuscripts.length - 1, projIndex + 1);
+            renderManuscript(projIndex);
+            playSound(audioClick);
+        });
+
+    })(); // end initCreationChamber
     /* --------------------------------------------------------
        UTILITY
     -------------------------------------------------------- */
