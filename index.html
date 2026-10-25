@@ -383,6 +383,145 @@ DIAGNOSTICS COMPLETE. NO ANOMALIES FOUND.
             </div>
         </div>
 
+                <!-- CREATION CHAMBER — INK MACHINE -->
+        <div id="section-creation" class="section-overlay creation-overlay hidden">
+            <div class="section-inner">
+
+                <!-- Header -->
+                <div class="section-header">
+                    <span class="sec-tag">[CREATION_CHAMBER.EXE]</span>
+                    <button class="close-section" data-target="section-creation">× CLOSE</button>
+                </div>
+
+                <!-- The Ink Machine Room -->
+                <div id="ink-room">
+
+                    <!-- Background image — your ink machine screenshot -->
+                    <div id="ink-bg"></div>
+
+                    <!-- Amber sepia overlay to match the game's tone -->
+                    <div id="ink-sepia"></div>
+
+                    <!-- Ink puddle ripple on the floor -->
+                    <div id="ink-puddle">
+                        <div class="puddle-ring r1"></div>
+                        <div class="puddle-ring r2"></div>
+                        <div class="puddle-ring r3"></div>
+                    </div>
+
+                    <!-- The machine door — clickable gateway -->
+                    <div id="ink-door">
+                        <div id="ink-door-panel">
+                            <!-- Door grate bars -->
+                            <div class="door-bar"></div>
+                            <div class="door-bar"></div>
+                            <div class="door-bar"></div>
+                            <div class="door-bar"></div>
+                        </div>
+                        <!-- Hover prompt -->
+                        <div id="ink-door-prompt">INITIATE EXTRUSION SEQUENCE?</div>
+                        <!-- Gauge needle on the wall -->
+                        <div id="gauge-wrap">
+                            <div id="gauge-needle"></div>
+                        </div>
+                    </div>
+
+                    <!-- Warning text at bottom — idle state -->
+                    <div id="ink-warning">
+                        WARNING: Do not touch the ink pipes.<br>
+                        <span class="ink-sub">The machine is watching.</span>
+                    </div>
+
+                    <!-- CONTENT REVEALED AFTER DOOR OPENS -->
+                    <div id="ink-content" class="hidden">
+
+                        <!-- Two mode buttons -->
+                        <div id="ink-mode-buttons">
+                            <button class="ink-mode-btn" id="btn-sketches">
+                                [ INK_SKETCHES ]<br>
+                                <small>visual art</small>
+                            </button>
+                            <button class="ink-mode-btn" id="btn-manuscripts">
+                                [ MANUSCRIPTS ]<br>
+                                <small>writing</small>
+                            </button>
+                        </div>
+
+                        <!-- CEL CAROUSEL — for art -->
+                        <div id="cel-carousel" class="ink-gallery hidden">
+                            <div class="cel-track" id="cel-track">
+                                <!-- Add your art here — duplicate .cel-item blocks -->
+                                <div class="cel-item">
+                                    <div class="cel-frame">
+                                        <div class="cel-peg-holes">
+                                            <span></span><span></span><span></span>
+                                        </div>
+                                        <div class="cel-image-area">
+                                            <!-- Replace with: <img src="your-art.jpg" alt="artwork"> -->
+                                            <div class="cel-placeholder">[ YOUR ART HERE ]</div>
+                                        </div>
+                                        <div class="cel-notes">Scene 1, Frame 01 — "Defective Concept"</div>
+                                    </div>
+                                </div>
+                                <div class="cel-item">
+                                    <div class="cel-frame">
+                                        <div class="cel-peg-holes">
+                                            <span></span><span></span><span></span>
+                                        </div>
+                                        <div class="cel-image-area">
+                                            <div class="cel-placeholder">[ YOUR ART HERE ]</div>
+                                        </div>
+                                        <div class="cel-notes">Scene 2, Frame 07 — "Scrapped"</div>
+                                    </div>
+                                </div>
+                                <div class="cel-item">
+                                    <div class="cel-frame">
+                                        <div class="cel-peg-holes">
+                                            <span></span><span></span><span></span>
+                                        </div>
+                                        <div class="cel-image-area">
+                                            <div class="cel-placeholder">[ YOUR ART HERE ]</div>
+                                        </div>
+                                        <div class="cel-notes">Scene 3, Frame 14 — "Do Not Distribute"</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Carousel arrows -->
+                            <button class="cel-arrow" id="cel-prev">◀</button>
+                            <button class="cel-arrow" id="cel-next">▶</button>
+                        </div>
+
+                        <!-- PROJECTOR — for writing -->
+                        <div id="projector-view" class="ink-gallery hidden">
+                            <!-- Projector beam effect -->
+                            <div id="proj-beam"></div>
+                            <!-- The "screen" on the back wall -->
+                            <div id="proj-screen">
+                                <div id="proj-content">
+                                    <!-- Writing entries rendered here by JS -->
+                                </div>
+                                <!-- Iron lever arrows -->
+                                <button class="proj-lever" id="proj-prev">⟨ PREV</button>
+                                <button class="proj-lever" id="proj-next">NEXT ⟩</button>
+                            </div>
+                            <!-- Projector reel visual -->
+                            <div id="proj-reel">
+                                <div class="reel-circle">
+                                    <div class="reel-spoke"></div>
+                                    <div class="reel-spoke"></div>
+                                    <div class="reel-spoke"></div>
+                                    <div class="reel-spoke"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div><!-- end ink-content -->
+
+                </div><!-- end ink-room -->
+
+            </div>
+        </div><!-- end section-creation -->
+
     </div><!-- end terminal-screen -->
 
 
