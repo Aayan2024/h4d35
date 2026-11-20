@@ -165,8 +165,8 @@
                 { text: "│         AVAILABLE COMMANDS                  │",      cls: "t-dim" },
                 { text: "├─────────────────────────────────────────────┤",      cls: "t-dim" },
                 { text: "│  DIAGNOSTICS  — who / what is this entity   │",      cls: "" },
-                { text: "│  ARCHIVE      — experiment files 199X       │",      cls: "" },
-                { text: "│  TRANSMIT     — intercepted signal logs      │",      cls: "" },
+                { text: "│  WEBCOMIC     — the webcomic crypt          │",      cls: "" },
+                { text: "│  TRANSMIT     — intercepted signal logs     │",      cls: "" },
                 { text: "│  SÉANCE       — establish contact           │",      cls: "" },
                 { text: "│  CREATION     — the creation chamber        │",      cls: "" },
                 { text: "│  CLEAR        — clear terminal              │",      cls: "" },
@@ -241,10 +241,11 @@
                     inputLocked = false;
                     break;
 
-                case "ARCHIVE":
-                    await addOutputLine("MOUNTING EXPERIMENT_ARCHIVE_199X ...", "", 0);
-                    await Crypt.delay(600);
-                    Crypt.openSection("section-archive");
+                case "WEBCOMIC":
+                    await addOutputLine("ACCESSING THE WEBCOMIC CRYPT ...", "", 0);
+                    await addOutputLine("WARNING: Some pages cannot be unseen.", "t-error", 60);
+                    await Crypt.delay(700);
+                    Crypt.openSection("section-webcomic");
                     inputLocked = false;
                     break;
 
