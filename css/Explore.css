@@ -1,0 +1,413 @@
+/* ============================================================
+   RESET & ROOT
+============================================================ */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+    --black:         #080808;
+    --bone-white:    #d8d4c8;
+    --red-accent:    #cc1111;
+    --film-white:    #e8e4d8;
+    --font-terminal: 'VT323', monospace;
+    --font-print:    'Special Elite', cursive;
+    --font-mono:     'Courier New', Courier, monospace;
+}
+
+html {
+    background: var(--black);
+    color: var(--bone-white);
+    font-family: var(--font-mono);
+    min-height: 100%;
+}
+
+body {
+    min-height: 100vh;
+    overflow-x: hidden;
+    overflow-y: auto;
+    position: relative;
+}
+
+
+/* ============================================================
+   CRT / FILM OVERLAYS
+============================================================ */
+.crt-overlay {
+    position: fixed; inset: 0;
+    background:
+        linear-gradient(rgba(0,0,0,0) 50%, rgba(0,0,0,0.18) 50%),
+        linear-gradient(90deg,rgba(255,0,0,0.03),rgba(0,255,0,0.015),rgba(0,0,255,0.03));
+    background-size: 100% 3px, 4px 100%;
+    z-index: 900; pointer-events: none;
+    animation: crt-shift 8s infinite linear;
+}
+@keyframes crt-shift {
+    0%   { background-position: 0 0, 0 0; }
+    100% { background-position: 0 300px, 0 0; }
+}
+
+#grain-canvas {
+    position: fixed; inset: 0; width: 100%; height: 100%;
+    z-index: 901; pointer-events: none;
+    opacity: 0.10; mix-blend-mode: screen;
+}
+
+.vignette {
+    position: fixed; inset: 0;
+    background: radial-gradient(ellipse at center,
+        transparent 40%, rgba(0,0,0,0.5) 75%, rgba(0,0,0,0.9) 100%);
+    z-index: 902; pointer-events: none;
+}
+
+.flicker-overlay {
+    position: fixed; inset: 0;
+    background: rgba(255,255,255,0);
+    z-index: 903; pointer-events: none;
+    animation: projector-flicker 0.12s infinite;
+}
+@keyframes projector-flicker {
+    0%  { opacity:0.98 } 15% { opacity:1.00 } 30% { opacity:0.97 }
+    45% { opacity:1.00 } 60% { opacity:0.99 } 75% { opacity:0.96 }
+    90% { opacity:1.00 } 100%{ opacity:0.98 }
+}
+
+.film-scratches { position:fixed; inset:0; z-index:904; pointer-events:none; overflow:hidden; }
+.scratch { position:absolute; top:0; width:1px; height:100%; background:rgba(255,255,255,0.5); opacity:0; }
+.scratch.s1 { left:23%;  animation:scratch-appear 7s  2s  infinite; }
+.scratch.s2 { left:61%;  animation:scratch-appear 11s 5s  infinite; }
+.scratch.s3 { left:78%;  animation:scratch-appear 9s  1s  infinite; }
+@keyframes scratch-appear {
+    0%  { opacity:0 } 2%  { opacity:0.6 } 4%  { opacity:0 }
+    5%  { opacity:0.4} 6% { opacity:0 }   100% { opacity:0 }
+}
+
+
+/* ============================================================
+   PAGE LAYOUT
+============================================================ */
+.page-wrap {
+    position: relative;
+    z-index: 10;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 32px 24px 80px;
+}
+
+
+/* ============================================================
+   HEADER
+============================================================ */
+.page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 36px;
+    border-bottom: 1px solid #1a1a1a;
+    padding-bottom: 16px;
+}
+
+.page-title {
+    font-family: var(--font-terminal);
+    font-size: clamp(1.4rem, 3vw, 2rem);
+    color: var(--bone-white);
+    letter-spacing: 6px;
+    line-height: 1;
+}
+
+.page-title span {
+    color: var(--red-accent);
+}
+
+.page-sub {
+    font-family: var(--font-terminal);
+    font-size: 0.75rem;
+    color: #333;
+    letter-spacing: 3px;
+    margin-top: 4px;
+}
+
+#back-btn {
+    font-family: var(--font-terminal);
+    font-size: 1rem;
+    background: transparent;
+    border: 1px solid #2a2a2a;
+    color: #555;
+    padding: 8px 20px;
+    cursor: pointer;
+    letter-spacing: 3px;
+    transition: all 0.2s;
+    flex-shrink: 0;
+}
+#back-btn:hover {
+    color: var(--bone-white);
+    border-color: #555;
+}
+
+
+/* ============================================================
+   COMIC PANEL GRID
+============================================================ */
+.section-label {
+    font-family: var(--font-terminal);
+    font-size: 0.75rem;
+    color: #333;
+    letter-spacing: 5px;
+    margin-bottom: 12px;
+}
+
+.comic-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    background: #000;
+    padding: 4px;
+    margin-bottom: 56px;
+}
+
+.comic-row {
+    display: flex;
+    gap: 4px;
+}
+
+.comic-panel {
+    flex: 1;
+    aspect-ratio: 2/3;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    background: #111;
+}
+
+.comic-panel img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center top;
+    display: block;
+    filter: contrast(108%) brightness(0.88);
+    transition: filter 0.4s ease, transform 0.5s ease;
+}
+
+.comic-panel:hover img {
+    filter: contrast(115%) brightness(0.65);
+    transform: scale(1.05);
+}
+
+.comic-panel::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: radial-gradient(circle, rgba(0,0,0,0.12) 1px, transparent 1px);
+    background-size: 3px 3px;
+    pointer-events: none;
+    z-index: 2;
+}
+
+.comic-panel::after {
+    content: '';
+    position: absolute; inset: 0;
+    border: 3px solid #000;
+    pointer-events: none;
+    z-index: 3;
+}
+
+.panel-info {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, transparent 100%);
+    padding: 32px 12px 10px;
+    z-index: 4;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.comic-panel:hover .panel-info {
+    opacity: 1;
+}
+
+.panel-title {
+    font-family: var(--font-terminal);
+    font-size: clamp(0.75rem, 1.4vw, 1rem);
+    color: var(--bone-white);
+    letter-spacing: 2px;
+    line-height: 1.2;
+}
+
+.panel-check-btn {
+    font-family: var(--font-terminal);
+    font-size: 0.72rem;
+    background: rgba(180,10,10,0.85);
+    border: 1px solid var(--red-accent);
+    color: var(--bone-white);
+    padding: 5px 10px;
+    cursor: pointer;
+    letter-spacing: 2px;
+    align-self: flex-start;
+    transition: background 0.2s;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.panel-check-btn:hover {
+    background: var(--red-accent);
+}
+
+
+/* ============================================================
+   MANGA TABLE
+============================================================ */
+.table-section {
+    margin-top: 8px;
+}
+
+.table-title {
+    font-family: var(--font-terminal);
+    font-size: clamp(1rem, 2vw, 1.3rem);
+    color: var(--bone-white);
+    letter-spacing: 5px;
+    margin-bottom: 6px;
+}
+
+.table-sub {
+    font-family: var(--font-terminal);
+    font-size: 0.72rem;
+    color: #333;
+    letter-spacing: 3px;
+    margin-bottom: 24px;
+}
+
+.manga-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--font-terminal);
+}
+
+.manga-table thead tr {
+    border-bottom: 2px solid #1a1a1a;
+}
+
+.manga-table th {
+    font-size: 0.72rem;
+    color: #444;
+    letter-spacing: 3px;
+    text-align: left;
+    padding: 8px 14px 10px;
+    font-weight: normal;
+    text-transform: uppercase;
+}
+
+.manga-table tbody tr {
+    border-bottom: 1px solid #111;
+    transition: background 0.2s;
+}
+
+.manga-table tbody tr:hover {
+    background: rgba(255,255,255,0.025);
+}
+
+.manga-table td {
+    padding: 14px 14px;
+    vertical-align: top;
+    font-size: clamp(0.85rem, 1.6vw, 1.05rem);
+    color: #888;
+    line-height: 1.5;
+}
+
+.manga-table td:first-child {
+    color: var(--bone-white);
+    font-size: clamp(0.9rem, 1.8vw, 1.1rem);
+    letter-spacing: 1px;
+    white-space: nowrap;
+}
+
+.manga-table td:nth-child(2),
+.manga-table td:nth-child(3) {
+    color: #666;
+    white-space: nowrap;
+    font-size: clamp(0.8rem, 1.4vw, 0.95rem);
+}
+
+.manga-table td:nth-child(4) {
+    font-family: var(--font-print);
+    font-size: clamp(0.82rem, 1.4vw, 0.95rem);
+    color: #777;
+    line-height: 1.7;
+    max-width: 320px;
+}
+
+.consensus-label {
+    color: var(--bone-white);
+    font-family: var(--font-terminal);
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+    display: block;
+    margin-bottom: 4px;
+}
+
+.table-check-btn {
+    font-family: var(--font-terminal);
+    font-size: 0.72rem;
+    background: transparent;
+    border: 1px solid #222;
+    color: #444;
+    padding: 6px 12px;
+    cursor: pointer;
+    letter-spacing: 2px;
+    white-space: nowrap;
+    transition: all 0.2s;
+    display: inline-block;
+    text-decoration: none;
+}
+
+.table-check-btn:hover {
+    border-color: var(--red-accent);
+    color: var(--red-accent);
+    box-shadow: 0 0 8px rgba(200,0,0,0.2);
+}
+
+.manga-table tbody tr.sep td {
+    padding: 2px;
+    border: none;
+}
+
+.table-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+
+/* ============================================================
+   BOTTOM NAV
+============================================================ */
+.bottom-nav {
+    margin-top: 56px;
+    display: flex;
+    justify-content: center;
+}
+
+#back-btn-bottom {
+    font-family: var(--font-terminal);
+    font-size: 1rem;
+    background: transparent;
+    border: 1px solid #222;
+    color: #444;
+    padding: 10px 28px;
+    cursor: pointer;
+    letter-spacing: 3px;
+    transition: all 0.2s;
+}
+
+#back-btn-bottom:hover {
+    border-color: #555;
+    color: var(--bone-white);
+}
+
+
+/* ============================================================
+   SELECTION
+============================================================ */
+::selection {
+    background: rgba(180,20,20,0.35);
+    color: var(--film-white);
+}
