@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>THE WEBCOMIC CRYPT — EXPLORE</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Special+Elite&family=VT323&display=swap" rel="stylesheet">
+
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+
+    <!-- Explore styles -->
+    <link rel="stylesheet" href="css/Explore.css">
+</head>
+<body>
+
+    <!-- OVERLAYS -->
+    <div class="crt-overlay"></div>
+    <canvas id="grain-canvas"></canvas>
+    <div class="film-scratches">
+        <div class="scratch s1"></div>
+        <div class="scratch s2"></div>
+        <div class="scratch s3"></div>
+    </div>
+    <div class="vignette"></div>
+    <div class="flicker-overlay"></div>
+
+
+    <!-- PAGE CONTENT -->
+    <div class="page-wrap">
+
+        <!-- HEADER -->
+        <div class="page-header">
+            <div>
+                <div class="page-title">THE <span>WEBCOMIC</span> CRYPT</div>
+                <div class="page-sub">// EXPLORE_COMICS.EXE // HANDLE WITH CARE //</div>
+            </div>
+            <button id="back-btn" onclick="history.back()">⟵ BACK</button>
+        </div>
+
+
+        <!-- 6 COMIC PANELS -->
+        <p class="section-label">// RECOMMENDED READS — PANEL VIEW //</p>
+        <div class="comic-grid">
+
+            <!-- TOP ROW -->
+            <div class="comic-row">
+
+                <div class="comic-panel">
+                    <img src="comics/tales_from_crypt.jpg" alt="Tales from the Crypt">
+                    <div class="panel-info">
+                        <span class="panel-title">TALES FROM THE CRYPT</span>
+                        <a href="#" class="panel-check-btn" target="_blank">CHECK IT OUT →</a>
+                    </div>
+                </div>
+
+                <div class="comic-panel">
+                    <img src="comics/lady_baltimore.jpg" alt="Lady Baltimore: The Witch Queens">
+                    <div class="panel-info">
+                        <span class="panel-title">LADY BALTIMORE</span>
+                        <a href="#" class="panel-check-btn" target="_blank">CHECK IT OUT →</a>
+                    </div>
+                </div>
+
+                <div class="comic-panel">
+                    <img src="comics/town_called_terror.jpg" alt="A Town Called Terror">
+                    <div class="panel-info">
+                        <span class="panel-title">A TOWN CALLED TERROR</span>
+                        <a href="#" class="panel-check-btn" target="_blank">CHECK IT OUT →</a>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- BOTTOM ROW -->
+            <div class="comic-row">
+
+                <div class="comic-panel">
+                    <img src="comics/night_of_ghoul.jpg" alt="Night of the Ghoul">
+                    <div class="panel-info">
+                        <span class="panel-title">NIGHT OF THE GHOUL</span>
+                        <a href="#" class="panel-check-btn" target="_blank">CHECK IT OUT →</a>
+                    </div>
+                </div>
+
+                <div class="comic-panel">
+                    <img src="comics/locke_and_key.jpg" alt="Locke & Key">
+                    <div class="panel-info">
+                        <span class="panel-title">LOCKE &amp; KEY</span>
+                        <a href="#" class="panel-check-btn" target="_blank">CHECK IT OUT →</a>
+                    </div>
+                </div>
+
+                <div class="comic-panel">
+                    <img src="comics/hollow_three_hills.jpg" alt="Hollow of the Three Hills">
+                    <div class="panel-info">
+                        <span class="panel-title">HOLLOW OF THE THREE HILLS</span>
+                        <a href="#" class="panel-check-btn" target="_blank">CHECK IT OUT →</a>
+                    </div>
+                </div>
+
+            </div>
+
+        </div><!-- end comic-grid -->
+
+
+        <!-- MANGA TABLE -->
+        <div class="table-section">
+            <div class="table-title">MANGA RECOMMENDATIONS</div>
+            <div class="table-sub">// CURATED HORROR — RANKED BY CONSENSUS //</div>
+
+            <div class="table-scroll">
+                <table class="manga-table">
+                    <thead>
+                        <tr>
+                            <th>Manga</th>
+                            <th>MAL Score</th>
+                            <th>AniList Score</th>
+                            <th>General Consensus</th>
+                            <th>Check It Out</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        <tr>
+                            <td>Uzumaki</td>
+                            <td>8.15 / 10</td>
+                            <td>~80%</td>
+                            <td>
+                                <span class="consensus-label">MASTERPIECE.</span>
+                                Widely considered Junji Ito's magnum opus and one of the greatest horror manga ever written. Praised for its escalating dread and surreal, iconic imagery.
+                            </td>
+                            <td><a href="#" class="table-check-btn" target="_blank">READ →</a></td>
+                        </tr>
+
+                        <tr>
+                            <td>Tomie</td>
+                            <td>7.79 / 10</td>
+                            <td>~75%</td>
+                            <td>
+                                <span class="consensus-label">ICONIC CLASSIC.</span>
+                                Celebrated as Junji Ito's debut work that defined his career. Readers love its eerie premise and art, though some note its episodic chapters can feel repetitive.
+                            </td>
+                            <td><a href="#" class="table-check-btn" target="_blank">READ →</a></td>
+                        </tr>
+
+                        <tr>
+                            <td>Franken Fran</td>
+                            <td>~7.7 / 10</td>
+                            <td>75%</td>
+                            <td>
+                                <span class="consensus-label">CULT FAVORITE.</span>
+                                Loved by fans of dark comedy, extreme gore, and twisted "be careful what you wish for" medical stories, though its shock value isn't for everyone.
+                            </td>
+                            <td><a href="#" class="table-check-btn" target="_blank">READ →</a></td>
+                        </tr>
+
+                        <tr>
+                            <td>The Drifting Classroom</td>
+                            <td>7.42 / 10</td>
+                            <td>71%</td>
+                            <td>
+                                <span class="consensus-label">INFLUENTIAL PIONEER.</span>
+                                A foundational 1970s survival horror classic that inspired Junji Ito. Praised for its bleak psychological tension, though the vintage art style and pacing feel dated to some modern readers.
+                            </td>
+                            <td><a href="#" class="table-check-btn" target="_blank">READ →</a></td>
+                        </tr>
+
+                        <tr>
+                            <td>Pygmalion</td>
+                            <td>~6.2 / 10</td>
+                            <td>59%</td>
+                            <td>
+                                <span class="consensus-label">AVERAGE / NICHE.</span>
+                                Appreciated for its bizarre, unsettling premise of killer mascots, but often criticized for a rushed ending and weaker character development compared to the others.
+                            </td>
+                            <td><a href="#" class="table-check-btn" target="_blank">READ →</a></td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- BOTTOM BACK NAV -->
+        <div class="bottom-nav">
+            <button id="back-btn-bottom" onclick="history.back()">⟵ RETURN TO THE CRYPT</button>
+        </div>
+
+    </div><!-- end page-wrap -->
+
+    <!-- Explore scripts — loaded after body so DOM is ready -->
+    <script src="js/Explore.js"></script>
+
+</body>
+</html>
